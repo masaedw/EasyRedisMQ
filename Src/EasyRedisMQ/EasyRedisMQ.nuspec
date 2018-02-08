@@ -6,13 +6,12 @@
     <title>$title$</title>
     <authors>$author$</authors>
     <owners>$author$</owners>
-    <projectUrl>https://github.com/jkruer01/EasyRedisMQ</projectUrl>
-    <licenseUrl>https://github.com/jkruer01/EasyRedisMQ/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/masaedw/EasyRedisMQ</projectUrl>
+    <licenseUrl>https://github.com/masaedw/EasyRedisMQ/blob/master/LICENSE</licenseUrl>
     <!--<iconUrl/>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2015</copyright>
-	<tags>Redis Message Queue PubSub Messaging Async NoSQL Client Distributed Cache </tags>
   </metadata>
 </package>
