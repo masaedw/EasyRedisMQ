@@ -5,8 +5,13 @@ using EasyRedisMQ.Services;
 using StackExchange.Redis.Extensions.Core;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Caching;
 using System.Threading.Tasks;
+
+#if NET462
+using System.Runtime.Caching;
+#else
+using Microsoft.Extensions.Caching.Memory;
+#endif
 
 namespace EasyRedisMQ
 {
