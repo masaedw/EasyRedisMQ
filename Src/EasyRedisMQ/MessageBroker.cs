@@ -5,8 +5,13 @@ using EasyRedisMQ.Services;
 using StackExchange.Redis.Extensions.Core;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Caching;
 using System.Threading.Tasks;
+
+#if NET462
+using System.Runtime.Caching;
+#else
+using Microsoft.Extensions.Caching.Memory;
+#endif
 
 namespace EasyRedisMQ
 {
@@ -22,7 +27,12 @@ namespace EasyRedisMQ
             _exchangeSubscriberService = exchangeSubscriberService;
             _notificationService = notificationService;
             _subscriberFactory = subscriberFactory;
+
+#if NET462
             _memoryCache = MemoryCache.Default;
+#else
+            _memoryCache = new MemoryCache(new MemoryCacheOptions());
+#endif
         }
 
         public async Task PublishAsync<T>(T message) where T : class
@@ -51,6 +61,7 @@ namespace EasyRedisMQ
             await _exchangeSubscriberService.AddSubscriberAsync(subScriber);
         }
 
+#if NET462
         private async Task<List<SubscriberInfo>> GetSubscriberInfosAsync<T>() where T : class
         {
             var typeName = typeof(T).FullName;
@@ -60,5 +71,21 @@ namespace EasyRedisMQ
             _memoryCache.Add(typeName, subscriberInfos, DateTimeOffset.Now.AddSeconds(15));
             return subscriberInfos;
         }
+#else
+        private async Task<List<SubscriberInfo>> GetSubscriberInfosAsync<T>() where T : class
+        {
+            var typeName = typeof(T).FullName;
+
+            var subscriberInfos = new List<SubscriberInfo>();
+
+            // Look for cache key.
+            if (!_memoryCache.TryGetValue(typeName, out subscriberInfos))
+            {
+                subscriberInfos = await _exchangeSubscriberService.GetSubscriberInfosAsync<T>();
+                _memoryCache.Set(typeName, subscriberInfos, DateTimeOffset.Now.AddSeconds(15));
+            }
+            return subscriberInfos;
+        }
+#endif
     }
 }
